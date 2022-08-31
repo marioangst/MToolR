@@ -1,6 +1,14 @@
 
 library("ggraph")
 
+#' A ggraph plotting setup for mental model data
+#'
+#' @param graph Igraph object based on mental model data
+#'
+#' @return A ggplot object
+#' @export
+#'
+#' @examples
 mental_model_ggraph <- function(graph){
   ggraph::ggraph(graph,layout = "sugiyama") +
     ggraph::geom_edge_fan(aes(start_cap =
@@ -20,12 +28,29 @@ mental_model_ggraph <- function(graph){
     coord_cartesian(clip = 'off')
 }
 
+#' Plot the aggregate model from an edgelist supplied by M-Tool
+#'
+#' @param edgelist Likely a raw edgelist data frame generated from parse_mtools_csv().
+#'
+#' @return A ggplot object
+#' @export
+#'
+#' @examples
 plot_aggregate_model <- function(edgelist){
   agg_el <- MToolR::get_aggregate_el(edgelist)
   g <- igraph_from_mtools_el(agg_el)
   mental_model_ggraph(g)
 }
 
+#' Plot the mental model of a specific user
+#'
+#' @param edgelist Likely a raw edgelist data frame generated from parse_mtools_csv().
+#' @param user A user ID as appearing in the User_ID column of the edgelist supplied
+#'
+#' @return
+#' @export
+#'
+#' @examples
 plot_user_model <- function(edgelist, user){
   user_el <- MToolR::get_user_el(edgelist, user)
   g <- igraph_from_mtools_el(user_el)
