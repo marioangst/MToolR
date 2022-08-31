@@ -11,7 +11,7 @@ library("ggraph")
 #' @examples
 mental_model_ggraph <- function(graph){
   ggraph::ggraph(graph,layout = "sugiyama") +
-    ggraph::geom_edge_fan(aes(start_cap =
+    ggraph::geom_edge_fan(ggplot2::aes(start_cap =
                                 label_rect(node1.name,
                                                    padding =
                                                      margin(2, 2, 2.5, 2, "mm")),
@@ -25,7 +25,7 @@ mental_model_ggraph <- function(graph){
                             label.padding = unit(0.2, "lines"),) +
     ggraph::scale_edge_width(range = c(1,3)) +
     ggraph::theme_graph() +
-    coord_cartesian(clip = 'off')
+    ggplot2::coord_cartesian(clip = 'off')
 }
 
 #' Plot the aggregate model from an edgelist supplied by M-Tool
