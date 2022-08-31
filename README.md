@@ -37,7 +37,7 @@ mtool_data <-
   MToolR::parse_mtools_csv("data/test_export.csv", 
                            exclude_nonresponse = TRUE)
 
-plot_user_model(mtool_data,
+plot_user_model(mtool_data, layout = "circle",
                 user = mtool_data$User_ID[50])
 ```
 

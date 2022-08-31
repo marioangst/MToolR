@@ -2,13 +2,16 @@
 #' A ggraph plotting setup for mental model data
 #'
 #' @param graph Igraph object based on mental model data
+#' @param ... other parameters to ggraph, eg. layout choice - normally defaults
+#' to "stress"
+#' Check the graphlayouts package for more options, eg. "circle" or "sugiyama"
 #'
 #' @return A ggplot object
 #' @export
 #'
 #' @examples
-mental_model_ggraph <- function(graph){
-  ggraph::ggraph(graph,layout = "stress") +
+mental_model_ggraph <- function(graph, ...){
+  ggraph::ggraph(graph, ...) +
     ggraph::geom_edge_fan(ggplot2::aes(start_cap =
                                          ggraph::label_rect(node1.name,
                                                             padding =
@@ -34,10 +37,10 @@ mental_model_ggraph <- function(graph){
 #' @export
 #'
 #' @examples
-plot_aggregate_model <- function(edgelist){
+plot_aggregate_model <- function(edgelist, ...){
   agg_el <- MToolR::get_aggregate_el(edgelist)
   g <- igraph_from_mtools_el(agg_el)
-  mental_model_ggraph(g)
+  mental_model_ggraph(g, ...)
 }
 
 #' Plot the mental model of a specific user
@@ -49,8 +52,8 @@ plot_aggregate_model <- function(edgelist){
 #' @export
 #'
 #' @examples
-plot_user_model <- function(edgelist, user){
+plot_user_model <- function(edgelist, user, ...){
   user_el <- MToolR::get_user_el(edgelist, user)
   g <- igraph_from_mtools_el(user_el)
-  mental_model_ggraph(g)
+  mental_model_ggraph(g, ...)
 }
