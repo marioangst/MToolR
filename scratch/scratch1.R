@@ -7,3 +7,6 @@ plot_aggregate_model(test_el)
 
 user_el <- get_user_el(test_el, user = test_el$User_ID[100])
 plot_user_model(test_el, user = test_el$User_ID[1])
+
+calculate_user_stats(test_el, user = test_el$User_ID[100])
+calculate_aggregate_stats(test_el)

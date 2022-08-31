@@ -47,8 +47,25 @@ mtool_data <-
                            exclude_nonresponse = TRUE)
 
 plot_user_model(mtool_data,
-                user = mtool_data$User_ID[100])
+                user = mtool_data$User_ID[50])
 
 ```
+
+## Example 2: Calculate overview stats for the aggregate model and a user model
+
+These are functions operating on igraph objects, so a lot is possible. At present, weighted betweenness and degrees are implemented.
+
+Here for an aggregate example:
+
+```{r}
+calculate_aggregate_stats(mtool_data)
+```
+
+And for a specific user:
+
+```{r}
+calculate_user_stats(mtool_data, user = mtool_data$User_ID[100])
+```
+
 
 <!-- build this with devtools::build_readme() -->

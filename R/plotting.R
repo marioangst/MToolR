@@ -8,7 +8,7 @@
 #'
 #' @examples
 mental_model_ggraph <- function(graph){
-  ggraph::ggraph(graph,layout = "sugiyama") +
+  ggraph::ggraph(graph,layout = "stress") +
     ggraph::geom_edge_fan(ggplot2::aes(start_cap =
                                          ggraph::label_rect(node1.name,
                                                             padding =
