@@ -1,6 +1,4 @@
 
-library("ggraph")
-
 #' A ggraph plotting setup for mental model data
 #'
 #' @param graph Igraph object based on mental model data
@@ -12,17 +10,17 @@ library("ggraph")
 mental_model_ggraph <- function(graph){
   ggraph::ggraph(graph,layout = "sugiyama") +
     ggraph::geom_edge_fan(ggplot2::aes(start_cap =
-                                label_rect(node1.name,
-                                                   padding =
-                                                     margin(2, 2, 2.5, 2, "mm")),
-                              end_cap = label_rect(
-                                node2.name,
-                                padding =
-                                  margin(2, 2, 2.5, 2, "mm")),
-                              width = weight),
-                          arrow = arrow(length = unit(4, 'mm'))) +
-    ggraph::geom_node_label(aes(label = name),
-                            label.padding = unit(0.2, "lines"),) +
+                                         ggraph::label_rect(node1.name,
+                                                            padding =
+                                                              ggplot2::margin(2, 2, 2.5, 2, "mm")),
+                                       end_cap = ggraph::label_rect(
+                                         node2.name,
+                                         padding =
+                                           ggplot2::margin(2, 2, 2.5, 2, "mm")),
+                                       width = weight),
+                          arrow = ggplot2::arrow(length = ggplot2::unit(4, 'mm'))) +
+    ggraph::geom_node_label(ggplot2::aes(label = name),
+                            label.padding = ggplot2::unit(0.2, "lines"),) +
     ggraph::scale_edge_width(range = c(1,3)) +
     ggraph::theme_graph() +
     ggplot2::coord_cartesian(clip = 'off')

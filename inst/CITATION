@@ -1,0 +1,11 @@
+citHeader("To cite MToolR in publications use:")
+
+citEntry(
+  entry    = "Misc",
+  title    = "MToolR - A companion R package for M-Tool",
+  author   = "Mario Angst and Karlijn van den Broek",
+  year     = 2022,
+  textVersion = paste(
+
+  )
+)

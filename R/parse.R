@@ -47,9 +47,9 @@ parse_mtools_csv <- function(csv_file,
 #' @examples
 get_aggregate_el <- function(edgelist){
   edgelist <- edgelist |>
-    group_by(From,To) |>
-    summarise(Weight = sum(abs(Weight)), .groups = 'keep' )  |>
-    ungroup()
+    dplyr::group_by(From,To) |>
+    dplyr::summarise(Weight = sum(abs(Weight)), .groups = 'keep' )  |>
+    dplyr::ungroup()
   return(edgelist)
 }
 
