@@ -1,7 +1,15 @@
-test_el <-
-  MToolR::parse_mtools_csv("tests/test_export.csv", exclude_nonresponse = TRUE)
 
-g <- MToolR::igraph_from_mtools_el(test_el)
+devtools::load_all()
+
+test <-
+  MToolR::mentalmodel_from_csv("tests/test_export.csv", exclude_nonresponse = TRUE)
+
+sloop::s3_dispatch(print(test))
+print(test)
+print(test$data)
+plot(test_mentalmodel$graph)
+
+g <- MToolR::mentalmodel(test_el)
 
 MToolR::mental_model_ggraph(g, layout = "circle")
 

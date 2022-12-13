@@ -1,4 +1,24 @@
 
+
+#' Get a aggregate edgelist from M-Tool Data
+#'
+#' This function returns a edgelist of aggregate weights
+#' (the simple sum function) given an M-Tool dataframe supplied
+#'
+#' @param edgelist Likely a raw edgelist data frame generated from parse_mtools_csv.
+#'
+#' @return A edgelist (data frame) with three columns: To, From, Weight
+#' @export
+#'
+#' @examples
+get_aggregate_el <- function(edgelist){
+  edgelist <- edgelist |>
+    dplyr::group_by(From,To) |>
+    dplyr::summarise(Weight = sum(abs(Weight)), .groups = 'keep' )  |>
+    dplyr::ungroup()
+  return(edgelist)
+}
+
 #' Create overview stats over the aggregate mental model
 #'
 #' @param edgelist Likely a raw edgelist data frame generated from parse_mtools_csv.
@@ -47,3 +67,4 @@ calculate_user_stats <- function(edgelist, user){
     w_total_degree = igraph::degree(g, mode = "total")
   )
 }
+

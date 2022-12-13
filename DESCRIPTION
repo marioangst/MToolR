@@ -24,4 +24,6 @@ Imports:
     ggplot2,
     ggraph,
     igraph,
-    logger
+    logger,
+    tibble,
+    vctrs
