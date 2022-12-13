@@ -1,4 +1,16 @@
 
+#' Default mental model plot function using ggraph
+#'
+#' @param mentalmodel An object of type mtoolr
+#'
+#' @return A plot
+#' @export
+#'
+#' @examples
+plot.mtoolr <- function(mentalmodel, ...){
+  mental_model_ggraph(mentalmodel$graph, ...)
+}
+
 #' A ggraph plotting setup for mental model data
 #'
 #' @param graph Igraph object based on mental model data
@@ -24,7 +36,7 @@ mental_model_ggraph <- function(graph, ...){
                           arrow = ggplot2::arrow(length = ggplot2::unit(4, 'mm'))) +
     ggraph::geom_node_label(ggplot2::aes(label = name),
                             label.padding = ggplot2::unit(0.2, "lines"),) +
-    ggraph::scale_edge_width(range = c(1,3)) +
+    ggraph::scale_edge_width(range = c(0.5,1.5)) +
     ggraph::theme_graph() +
     ggplot2::coord_cartesian(clip = 'off')
 }

@@ -3,6 +3,7 @@
 #' Is the object of class mtoolr
 #'
 #' @param object An R object
+#' @param aggregated Is this an aggreagated mental model?
 #'
 #' @return TRUE if the object is of class mtoolr
 #' @export
@@ -12,18 +13,27 @@ is_mtoolr <- function(object){
   "mtoolr" %in% class(object)
 }
 
-new_mtoolr <- function(x = list()){
-  is_valid_mtool_edgelist(x)
+new_mtoolr <- function(x = list(),
+                       aggregated = logical()){
+
+  stopifnot(is.logical(aggregated))
+
   mentalmodel <- list()
   mentalmodel$data <- tibble::tibble(x)
-  mentalmodel$users <- users_graphs_constructor(edgelist = mentalmodel$data,
-                                                user_list = unique(mentalmodel$data$User_ID))
   mentalmodel$graph <- igraph_from_mtools_el(x)
+
+  if(!(aggregated)){
+    is_valid_mtool_edgelist(x)
+    mentalmodel$users <- users_graphs_constructor(edgelist = mentalmodel$data,
+                                                  user_list = unique(mentalmodel$data$User_ID))
+  }
   structure(mentalmodel,
-            class = "mtoolr")
+            class = "mtoolr",
+            aggregated = aggregated)
 }
 
-mentalmodel <- function(x){
+mentalmodel <- function(x,
+                        aggregated = FALSE){
   new_mtoolr(x)
 }
 
@@ -31,6 +41,10 @@ is_valid_mtool_edgelist <- function(edgelist){
   all(
     is.list(edgelist),
     check_mtool_columns_exist(edgelist))
+}
+
+is_aggregated <- function(x){
+  attributes(x)$aggregated
 }
 
 check_mtool_columns_exist <- function(x){

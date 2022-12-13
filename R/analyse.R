@@ -1,41 +1,76 @@
 
 
-#' Get a aggregate edgelist from M-Tool Data
+#' Create aggregate edgelist from M-Tool Data
 #'
-#' This function returns a edgelist of aggregate weights
-#' (the simple sum function) given an M-Tool dataframe supplied
+#' This function returns a mental model aggregating all
+#' individual mental models in a mtoolr object.
+#' The current default aggregation function is the median weight.
 #'
-#' @param edgelist Likely a raw edgelist data frame generated from parse_mtools_csv.
+#' @param mentalmodel A mtoolr object
 #'
-#' @return A edgelist (data frame) with three columns: To, From, Weight
+#' @return A aggregated mtoolr object
 #' @export
 #'
 #' @examples
-get_aggregate_el <- function(edgelist){
-  edgelist <- edgelist |>
+get_aggregated <- function(mentalmodel, aggregate_function = "median"){
+  stopifnot(is_mtoolr(mentalmodel))
+  stopifnot(!(is_aggregated(mentalmodel)))
+  edgelist <- mentalmodel$data
+  aggregated_el <- edgelist |>
     dplyr::group_by(From,To) |>
-    dplyr::summarise(Weight = sum(abs(Weight)), .groups = 'keep' )  |>
+    dplyr::summarise(Weight = median(Weight,na.rm = TRUE), .groups = 'keep' )  |>
     dplyr::ungroup()
-  return(edgelist)
+
+  logger::log_info("aggregated {length(mentalmodel$users)} models using aggregation function {aggregate_function}")
+
+  aggregated <- new_mtoolr(aggregated_el, aggregated = TRUE)
+  return(aggregated)
 }
 
-#' Create overview stats over the aggregate mental model
+#' Create overview stats for a mental model
 #'
-#' @param edgelist Likely a raw edgelist data frame generated from parse_mtools_csv.
+#' @param mentalmodel A mtoolr mental model object
 #'
-#' @return A data frame with the following stats:
+#' @return A tibble with the following stats:
+#'
 #' - weighted betwenness
 #' - weighted indegree
 #' - weighted outdegree
 #' - weighted total degree
 #'
+#' If a aggregated mental model is supplied, statistics
+#' are returned for all aggregated groups.
+#'
+#' If a mental model object with individual user data is
+#' supplied, statistics are returned per user.
+#'
 #' @export
 #'
 #' @examples
-calculate_aggregate_stats <- function(edgelist){
-  df <- get_aggregate_el(edgelist)
-  g <- igraph_from_mtools_el(df)
-  data.frame(
+calculate_descriptive_statistics <- function(mentalmodel){
+
+  if(is_aggregated(mentalmodel)){
+    return(
+     network_stats(mentalmodel$graph)
+    )
+  }
+  else{
+    return(
+      do.call("rbind",lapply(
+        names(mentalmodel$users),
+        function(x){
+          network_stats(mentalmodel$users[[x]][["graph"]]) |>
+            mutate(user = x)
+        }
+      ))
+    )
+  }
+
+}
+
+network_stats <- function(g){
+  tibble::tibble(
+    concept = names(igraph::betweenness(g)),
     w_betweenness = igraph::betweenness(g),
     w_in_degree = igraph::degree(g,mode = "in"),
     w_out_degree = igraph::degree(g, mode = "out"),
@@ -43,28 +78,4 @@ calculate_aggregate_stats <- function(edgelist){
   )
 }
 
-#' Create overview stats over a single user mental model
-#'
-#' @param edgelist Likely a raw edgelist data frame generated from parse_mtools_csv.
-#' @param user A user ID as appearing in the User_ID column of the edgelist supplied
-#'
-#' @return A data frame with the following stats:
-#' - weighted betwenness
-#' - weighted indegree
-#' - weighted outdegree
-#' - weighted total degree
-#'
-#' @export
-#'
-#' @examples
-calculate_user_stats <- function(edgelist, user){
-  df <- get_user_el(edgelist,user)
-  g <- igraph_from_mtools_el(df)
-  data.frame(
-    w_betweenness = igraph::betweenness(g),
-    w_in_degree = igraph::degree(g,mode = "in"),
-    w_out_degree = igraph::degree(g, mode = "out"),
-    w_total_degree = igraph::degree(g, mode = "total")
-  )
-}
 

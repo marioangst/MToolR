@@ -4,12 +4,15 @@
 \alias{plot_user_model}
 \title{Plot the mental model of a specific user}
 \usage{
-plot_user_model(edgelist, user)
+plot_user_model(edgelist, user, ...)
 }
 \arguments{
 \item{edgelist}{Likely a raw edgelist data frame generated from parse_mtools_csv().}
 
 \item{user}{A user ID as appearing in the User_ID column of the edgelist supplied}
+}
+\value{
+
 }
 \description{
 Plot the mental model of a specific user

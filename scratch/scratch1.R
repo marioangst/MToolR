@@ -1,22 +1,22 @@
 
+devtools::document()
 devtools::load_all()
 
 test <-
   MToolR::mentalmodel_from_csv("tests/test_export.csv", exclude_nonresponse = TRUE)
 
+test
+sloop::s3_dispatch(show(test))
 sloop::s3_dispatch(print(test))
+sloop::s3_dispatch(plot(test))
 print(test)
+plot(test)
 print(test$data)
-plot(test_mentalmodel$graph)
 
-g <- MToolR::mentalmodel(test_el)
+test_agg <- get_aggregated(test)
+test_agg
 
-MToolR::mental_model_ggraph(g, layout = "circle")
+plot(test_agg)
 
-plot_aggregate_model(test_el, layout = "centrality")
-
-user_el <- get_user_el(test_el, user = test_el$User_ID[100])
-plot_user_model(test_el, user = test_el$User_ID[1])
-
-calculate_user_stats(test_el, user = test_el$User_ID[100])
-calculate_aggregate_stats(test_el)
+calculate_descriptive_statistics(test)
+calculate_descriptive_statistics(test_agg)

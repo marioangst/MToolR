@@ -4,7 +4,7 @@
 \alias{plot_aggregate_model}
 \title{Plot the aggregate model from an edgelist supplied by M-Tool}
 \usage{
-plot_aggregate_model(edgelist)
+plot_aggregate_model(edgelist, ...)
 }
 \arguments{
 \item{edgelist}{Likely a raw edgelist data frame generated from parse_mtools_csv().}

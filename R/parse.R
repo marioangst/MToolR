@@ -32,7 +32,7 @@ mentalmodel_from_csv <- function(csv_file,
                      {length(unique(edgelist$User_ID))} users")
   }
 
-  new_mentalmodel <- new_mtoolr(edgelist)
+  new_mentalmodel <- new_mtoolr(edgelist, aggregated = FALSE)
 
   return(new_mentalmodel)
 }
