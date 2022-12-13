@@ -2,7 +2,7 @@
 % Please edit documentation in R/new.R
 \name{is_mtoolr}
 \alias{is_mtoolr}
-\title{Is the object of class mtoolr}
+\title{Is the object of class mtoolr?}
 \usage{
 is_mtoolr(object)
 }
@@ -15,5 +15,5 @@ is_mtoolr(object)
 TRUE if the object is of class mtoolr
 }
 \description{
-Is the object of class mtoolr
+Is the object of class mtoolr?
 }

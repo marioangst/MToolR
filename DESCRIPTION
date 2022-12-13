@@ -25,5 +25,7 @@ Imports:
     ggraph,
     igraph,
     logger,
+    patchwork,
+    pbapply,
     tibble,
     vctrs

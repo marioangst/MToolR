@@ -57,7 +57,7 @@ calculate_descriptive_statistics <- function(mentalmodel){
   else{
     return(
       do.call("rbind",lapply(
-        names(mentalmodel$users),
+        mentalmodel$user_list,
         function(x){
           network_stats(mentalmodel$users[[x]][["graph"]]) |>
             mutate(user = x)

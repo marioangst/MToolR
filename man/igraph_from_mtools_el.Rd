@@ -6,6 +6,7 @@
 \usage{
 igraph_from_mtools_el(
   edgelist,
+  concepts,
   from_col = "From",
   to_col = "To",
   weight_col = "Weight"
@@ -13,6 +14,8 @@ igraph_from_mtools_el(
 }
 \arguments{
 \item{edgelist}{A raw edgelist necessarily containing a sender, receiver and weight column}
+
+\item{concepts}{character vector of unique concepts gathered in mental model}
 
 \item{from_col}{The name of the column to read sender nodes from. Defaults to MTool output "From"}
 

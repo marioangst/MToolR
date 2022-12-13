@@ -1,6 +1,6 @@
 
 
-#' Is the object of class mtoolr
+#' Is the object of class mtoolr?
 #'
 #' @param object An R object
 #' @param aggregated Is this an aggreagated mental model?
@@ -20,12 +20,16 @@ new_mtoolr <- function(x = list(),
 
   mentalmodel <- list()
   mentalmodel$data <- tibble::tibble(x)
-  mentalmodel$graph <- igraph_from_mtools_el(x)
+  mentalmodel$concepts <- unique(c(x$To,x$From))
+  mentalmodel$user_list <- unique(mentalmodel$data$User_ID)
+  mentalmodel$graph <- igraph_from_mtools_el(x,
+                                             concepts = mentalmodel$concepts)
 
   if(!(aggregated)){
     is_valid_mtool_edgelist(x)
     mentalmodel$users <- users_graphs_constructor(edgelist = mentalmodel$data,
-                                                  user_list = unique(mentalmodel$data$User_ID))
+                                                  user_list = mentalmodel$user_list,
+                                                  concepts = mentalmodel$concepts)
   }
   structure(mentalmodel,
             class = "mtoolr",
@@ -51,6 +55,10 @@ check_mtool_columns_exist <- function(x){
   MTOOL_EXPORT_COLUMNS %in% colnames(x)
 }
 
+get_user_graph <- function(user,x){
+  x$users[[user]]$graph
+}
+
 #' Create an igraph graph object from a M-Tool edgelist
 #'
 #' Create a weighted, direct igraph graph object from M-Tool data.
@@ -61,16 +69,21 @@ check_mtool_columns_exist <- function(x){
 #' @param from_col The name of the column to read sender nodes from. Defaults to MTool output "From"
 #' @param to_col The name of the column to read receiver nodes from. Defaults to MTool output "To"
 #' @param weight_col The name of the
+#' @param concepts character vector of unique concepts gathered in mental model
 #'
 #' @return A weighted, directed igraph object
 #' @export
 #'
 #' @examples
 igraph_from_mtools_el <- function(edgelist,
+                                  concepts,
                                   from_col = "From",
                                   to_col = "To",
                                   weight_col = "Weight"){
-  g <- igraph::graph_from_data_frame(edgelist[,c(from_col,to_col,weight_col)])
+  g <- igraph::graph_from_data_frame(d = edgelist[,c(from_col,
+                                                     to_col,
+                                                     weight_col)],
+                                     vertices = concepts)
   g <- igraph::set_edge_attr(graph = g, name = "weight",
                              value= edgelist$Weight)
   return(g)
@@ -98,18 +111,20 @@ get_user_el <- function(edgelist, user){
   return(edgelist)
 }
 
-get_user_graph <- function(edgelist,user){
+create_user_graph <- function(edgelist,user,concepts){
   user_el <- get_user_el(edgelist,user)
-  user_graph <- igraph_from_mtools_el(user_el)
+  user_graph <- igraph_from_mtools_el(user_el,concepts = concepts)
   return(user_graph)
 }
 
-users_graphs_constructor <- function(edgelist, user_list){
+users_graphs_constructor <- function(edgelist, user_list, concepts){
   user_graph_list <-
     lapply(user_list, function(x){
       list(
         data = get_user_el(user = x, edgelist = edgelist),
-        graph = get_user_graph(user = x, edgelist = edgelist),
+        graph = create_user_graph(user = x,
+                               edgelist = edgelist,
+                               concepts = concepts),
         user = x
       )
     })
