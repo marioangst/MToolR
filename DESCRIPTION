@@ -20,6 +20,7 @@ RoxygenNote: 7.2.1
 URL: https://github.com/marioangst/MToolR
 BugReports: https://github.com/marioangst/MToolR/issues
 Imports: 
+    cluster,
     dplyr,
     ggplot2,
     ggraph,

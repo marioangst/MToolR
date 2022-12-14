@@ -59,7 +59,7 @@ mental_model_ggraph <- function(graph, ...){
 #' Plot the mental model of a specific user
 #'
 #' @param mentalmodel A mtoolr object containing the mental model of the user
-#' @param user A user ID to be displayed
+#' @param user The id of the user
 #'
 #' @return
 #' @export

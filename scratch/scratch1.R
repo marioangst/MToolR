@@ -22,5 +22,19 @@ plot(test_agg)
 calculate_descriptive_statistics(test)
 calculate_descriptive_statistics(test_agg)
 
-get_user_model_sim(test$user_list[1],test$user_list[2], test)
-get_model_sims(test)
+get_user_model_sim(test$user_list[1],test$user_list[2], test, method = "gower")
+get_user_model_sim(test$user_list[1],test$user_list[2], test, method = "exact_overlap")
+
+sims <- get_model_sims(test)
+heatmap(sims)
+unique(diag(sims))
+
+sims2 <- get_model_sims(test,method = "jaccard")
+heatmap(sims2)
+unique(diag(sims2))
+
+sims3 <- get_model_sims(test,method = "simple_overlap")
+heatmap(sims3)
+unique(diag(sims3))
+
+cor(data.frame(as.vector(sims),as.vector(sims2),as.vector(sims3)))

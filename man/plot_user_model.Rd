@@ -7,7 +7,7 @@
 plot_user_model(user, mentalmodel, ...)
 }
 \arguments{
-\item{user}{A user ID to be displayed}
+\item{user}{The id of the user}
 
 \item{mentalmodel}{A mtoolr object containing the mental model of the user}
 }
