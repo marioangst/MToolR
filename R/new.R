@@ -78,6 +78,17 @@ check_mtool_columns_exist <- function(x){
   MTOOL_EXPORT_COLUMNS %in% colnames(x)
 }
 
+check_group_var_is_valid <- function(mentalmodel,
+                                     group_var){
+  if(!(group_var %in% colnames(mentalmodel$user_data))){
+    stop(paste0("The grouping variable is not in the user data. Existing columns: ",
+                paste0(colnames(mentalmodel$user_data),collapse = ",")))
+  }
+  else{
+    return(TRUE)
+  }
+}
+
 get_user_graph <- function(user,x){
   x$users[[user]]$graph
 }

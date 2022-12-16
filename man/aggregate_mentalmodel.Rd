@@ -4,7 +4,12 @@
 \alias{aggregate_mentalmodel}
 \title{Create aggregate edgelist from M-Tool Data}
 \usage{
-aggregate_mentalmodel(mentalmodel, aggregate_function = "median")
+aggregate_mentalmodel(
+  mentalmodel,
+  aggregate_function = "median",
+  group_var = NULL,
+  group_value = NULL
+)
 }
 \arguments{
 \item{mentalmodel}{A mtoolr object}

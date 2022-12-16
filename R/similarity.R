@@ -8,10 +8,7 @@ get_model_sims <- function(mentalmodel,
   }
 
   if (!is.null(group_var)){
-    if(!(group_var %in% colnames(mentalmodel$user_data))){
-      stop(paste0("The grouping variable is not in the user data. Existing columns: ",
-                  paste0(colnames(mentalmodel$user_data),collapse = ",")))
-    }
+    check_group_var_is_valid(mentalmodel,group_var)
     if(!(is.factor(mentalmodel$user_data[group_var]))){
       logger::log_info("Converting grouping variable {group_var} to factor. This might have unintended consequences.
                        To avoid this, provide a factor variable.")

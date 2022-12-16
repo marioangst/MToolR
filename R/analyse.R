@@ -12,10 +12,30 @@
 #' @export
 #'
 #' @examples
-aggregate_mentalmodel <- function(mentalmodel, aggregate_function = "median"){
+aggregate_mentalmodel <- function(mentalmodel,
+                                  aggregate_function = "median",
+                                  group_var = NULL,
+                                  group_value = NULL){
   stopifnot(is_mtoolr(mentalmodel))
   stopifnot(!(is_aggregated(mentalmodel)))
   edgelist <- mentalmodel$data
+  if(!(is.null(group_var))){
+    check_group_var_is_valid(mentalmodel,group_var)
+    if(!(is.factor(mentalmodel$user_data[group_var]))){
+      logger::log_info("Converting grouping variable {group_var} to factor. This might have unintended consequences.
+                       To avoid this, provide a factor variable.")
+      mentalmodel$user_data[[group_var]] <- as.factor(mentalmodel$user_data[[group_var]])
+    }
+    levels_group_var <- levels(mentalmodel$user_data[[group_var]])
+    if(!(group_value %in% levels_group_var)){
+      stop(paste0(group_value," is not a factor level of variable ",group_var))
+    }
+    else{
+      group_ids <- get_group_subset_ids(group_value,group_var,mentalmodel)
+      edgelist <- edgelist |>
+        dplyr::filter(User_ID %in% group_ids)
+    }
+  }
   aggregated_el <- edgelist |>
     dplyr::group_by(From,To) |>
     dplyr::summarise(Weight = median(Weight,na.rm = TRUE), .groups = 'keep' )  |>

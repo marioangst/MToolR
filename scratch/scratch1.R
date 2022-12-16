@@ -31,6 +31,8 @@ test_agg
 
 plot(test_agg)
 
+test_group_agg <- aggregate_mentalmodel(test,group_var = "group",group_value = "group1")
+
 calculate_descriptive_statistics(test)
 calculate_descriptive_statistics(test_agg)
 
