@@ -31,7 +31,12 @@ test_agg
 
 plot(test_agg)
 
-test_group_agg <- aggregate_mentalmodel(test,group_var = "group",group_value = "group1")
+test_group1_agg <- aggregate_mentalmodel(test,group_var = "group",group_value = "group1")
+test_group2_agg <- aggregate_mentalmodel(test,group_var = "group",group_value = "group2")
+
+coords <- igraph::layout_nicely(test_group1_agg$graph)
+library(patchwork)
+plot(test_group1_agg, layout = coords) / plot(test_group2_agg, layout = coords)
 
 calculate_descriptive_statistics(test)
 calculate_descriptive_statistics(test_agg)

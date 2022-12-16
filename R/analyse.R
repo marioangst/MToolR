@@ -53,7 +53,7 @@ aggregate_mentalmodel <- function(mentalmodel,
 
   }
 
-  aggregated <- new_mtoolr(aggregated_el, aggregated = TRUE)
+  aggregated <- new_mtoolr(aggregated_el, aggregated = TRUE, concepts = mentalmodel$concepts)
   return(aggregated)
 }
 

@@ -14,13 +14,19 @@ is_mtoolr <- function(object){
 }
 
 new_mtoolr <- function(x = list(),
-                       aggregated = logical()){
+                       aggregated = logical(),
+                       concepts = NULL){
 
   stopifnot(is.logical(aggregated))
 
   mentalmodel <- list()
   mentalmodel$data <- tibble::tibble(x)
-  mentalmodel$concepts <- unique(c(x$To,x$From))
+  if(is.null(concepts)){
+    mentalmodel$concepts <- unique(c(x$To,x$From))
+  }
+  if(!is.null(concepts)){
+    mentalmodel$concepts <- concepts
+  }
   mentalmodel$user_data <- tibble(
     id = unique(mentalmodel$data$User_ID)
   )
