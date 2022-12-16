@@ -31,7 +31,9 @@ aggregate_mentalmodel <- function(mentalmodel,
       stop(paste0(group_value," is not a factor level of variable ",group_var))
     }
     else{
-      group_ids <- get_group_subset_ids(group_value,group_var,mentalmodel)
+      group_ids <- get_group_subset_ids(value = group_value,
+                                        group_var = group_var,
+                                        x = mentalmodel)
       edgelist <- edgelist |>
         dplyr::filter(User_ID %in% group_ids)
     }
@@ -41,10 +43,24 @@ aggregate_mentalmodel <- function(mentalmodel,
     dplyr::summarise(Weight = median(Weight,na.rm = TRUE), .groups = 'keep' )  |>
     dplyr::ungroup()
 
-  logger::log_info("aggregated {length(mentalmodel$users)} models using aggregation function {aggregate_function}")
+  if(!(is.null(group_var))){
+    logger::log_info("aggregated {length(group_ids)} models using aggregation function {aggregate_function} grouping by
+                     grouping variable {group_var} on value {group_value}")
+
+  }
+  if(is.null(group_var)){
+    logger::log_info("aggregated {length(mentalmodel$users)} models using aggregation function {aggregate_function}")
+
+  }
 
   aggregated <- new_mtoolr(aggregated_el, aggregated = TRUE)
   return(aggregated)
+}
+
+get_group_subset_ids <- function(value, group_var, x){
+  df <- x$user_data
+  id_vec <- dplyr::pull(df[df[[group_var]] == value,c("id")])
+  return(id_vec)
 }
 
 #' Create overview stats for a mental model

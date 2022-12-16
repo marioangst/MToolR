@@ -10,19 +10,22 @@
 plot.mtoolr <- function(mentalmodel, ...){
   if(is_aggregated(mentalmodel)){
     logger::log_info("Plotting aggregated mental model")
-    mental_model_ggraph(mentalmodel$graph, ...)
+    p <- mental_model_ggraph(mentalmodel$graph, ...)
+    return(p)
   }
   if(!is_aggregated(mentalmodel)){
     user_sample <-
       sample(mentalmodel$user_data$id,
            1, replace = FALSE)
     logger::log_info("Plotting randomly selected user models: {user_sample}")
-    plot_user_model(user_sample,
-                    mentalmodel,
-                    layout = "stress") +
+    p <-
+      plot_user_model(user_sample,
+                      mentalmodel,
+                      layout = "stress") +
       ggplot2::ggtitle(
         "Mental model sample",
         subtitle = paste0("user ",user_sample))
+    return(p)
   }
 }
 
@@ -38,7 +41,8 @@ plot.mtoolr <- function(mentalmodel, ...){
 #'
 #' @examples
 mental_model_ggraph <- function(graph, ...){
-  ggraph::ggraph(graph, ...) +
+  p <-
+    ggraph::ggraph(graph, ...) +
     ggraph::geom_edge_fan(ggplot2::aes(start_cap =
                                          ggraph::label_rect(node1.name,
                                                             padding =
@@ -54,6 +58,7 @@ mental_model_ggraph <- function(graph, ...){
     ggraph::scale_edge_width(range = c(0.5,1.5)) +
     ggraph::theme_graph() +
     ggplot2::coord_cartesian(clip = 'off')
+  return(p)
 }
 
 #' Plot the mental model of a specific user

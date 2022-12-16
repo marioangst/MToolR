@@ -38,12 +38,6 @@ get_model_sims <- function(mentalmodel,
 
 }
 
-get_group_subset_ids <- function(value, group_var, mentalmodel){
-  df <- mentalmodel$user_data
-  id_vec <- dplyr::pull(df[df[[group_var]] == value,c("id")])
-  return(id_vec)
-}
-
 get_users_sim_mat <- function(users,mentalmodel,method){
   sim_mat <- matrix(
     NA,
