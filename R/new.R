@@ -21,14 +21,19 @@ new_mtoolr <- function(x = list(),
   mentalmodel <- list()
   mentalmodel$data <- tibble::tibble(x)
   mentalmodel$concepts <- unique(c(x$To,x$From))
-  mentalmodel$user_list <- unique(mentalmodel$data$User_ID)
+  mentalmodel$user_data <- tibble(
+    id = unique(mentalmodel$data$User_ID)
+  )
   mentalmodel$graph <- igraph_from_mtools_el(x,
                                              concepts = mentalmodel$concepts)
 
   if(!(aggregated)){
-    is_valid_mtool_edgelist(x)
+    if(
+      !(is_valid_mtool_edgelist(x))){
+      stop("The provided mtool edgelist is not valid")
+    }
     mentalmodel$users <- users_graphs_constructor(edgelist = mentalmodel$data,
-                                                  user_list = mentalmodel$user_list,
+                                                  user_list = mentalmodel$user_data$id,
                                                   concepts = mentalmodel$concepts)
   }
   structure(mentalmodel,
@@ -41,10 +46,28 @@ mentalmodel <- function(x,
   new_mtoolr(x)
 }
 
+add_user_data <- function(mentalmodel,
+                          user_data,
+                          id_key){
+
+  if(!is_valid_user_data(mentalmodel = mentalmodel, user_data = user_data, id_key = id_key)){
+    stop("The provided user data is not valid. Did you use the wrong id key? Is there an entry for all users?")
+  }
+
+  joined_data <- mentalmodel$user_data |> dplyr::right_join(user_data, by = c("id" = id_key))
+
+  mentalmodel$user_data <- joined_data
+  return(mentalmodel)
+}
+
 is_valid_mtool_edgelist <- function(edgelist){
   all(
     is.list(edgelist),
     check_mtool_columns_exist(edgelist))
+}
+
+is_valid_user_data <- function(mentalmodel,user_data, id_key){
+  all(mentalmodel$user_data$id %in% user_data[[id_key]])
 }
 
 is_aggregated <- function(x){

@@ -14,7 +14,7 @@ plot.mtoolr <- function(mentalmodel, ...){
   }
   if(!is_aggregated(mentalmodel)){
     user_sample <-
-      sample(mentalmodel$user_list,
+      sample(mentalmodel$user_data$id,
            1, replace = FALSE)
     logger::log_info("Plotting randomly selected user models: {user_sample}")
     plot_user_model(user_sample,

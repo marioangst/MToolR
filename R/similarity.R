@@ -1,11 +1,53 @@
 
 get_model_sims <- function(mentalmodel,
-                           method = NULL){
+                           method = NULL,
+                           group_var = NULL){
   if (is.null(method)){
     method <- "gower"
     logger::log_info("Using Gower similarity, comparing only edge weights > 0 as default.")
   }
-  users <- mentalmodel$user_list
+
+  if (!is.null(group_var)){
+    if(!(group_var %in% colnames(mentalmodel$user_data))){
+      stop(paste0("The grouping variable is not in the user data. Existing columns: ",
+                  paste0(colnames(mentalmodel$user_data),collapse = ",")))
+    }
+    if(!(is.factor(mentalmodel$user_data[group_var]))){
+      logger::log_info("Converting grouping variable {group_var} to factor. This might have unintended consequences.
+                       To avoid this, provide a factor variable.")
+      mentalmodel$user_data[[group_var]] <- as.factor(mentalmodel$user_data[[group_var]])
+    }
+    levels_group_var <- levels(mentalmodel$user_data[[group_var]])
+    users_list <-
+      lapply(levels_group_var,
+             get_group_subset_ids,
+             mentalmodel = mentalmodel,
+             group_var = group_var)
+    sims_list <-
+      lapply(users_list,
+             get_users_sim_mat,
+             mentalmodel = mentalmodel,
+             method = method)
+    names(sims_list) <- levels_group_var
+    return(sims_list)
+  }
+  else{
+    users <- mentalmodel$user_data$id
+    sim_mat <- get_users_sim_mat(users,
+                                 mentalmodel = mentalmodel,
+                                 method = method)
+    return(sim_mat)
+  }
+
+}
+
+get_group_subset_ids <- function(value, group_var, mentalmodel){
+  df <- mentalmodel$user_data
+  id_vec <- dplyr::pull(df[df[[group_var]] == value,c("id")])
+  return(id_vec)
+}
+
+get_users_sim_mat <- function(users,mentalmodel,method){
   sim_mat <- matrix(
     NA,
     nrow = length(users),

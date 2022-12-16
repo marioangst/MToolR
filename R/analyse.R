@@ -12,7 +12,7 @@
 #' @export
 #'
 #' @examples
-get_aggregated <- function(mentalmodel, aggregate_function = "median"){
+aggregate_mentalmodel <- function(mentalmodel, aggregate_function = "median"){
   stopifnot(is_mtoolr(mentalmodel))
   stopifnot(!(is_aggregated(mentalmodel)))
   edgelist <- mentalmodel$data
@@ -57,7 +57,7 @@ calculate_descriptive_statistics <- function(mentalmodel){
   else{
     return(
       do.call("rbind",lapply(
-        mentalmodel$user_list,
+        mentalmodel$user_data$id,
         function(x){
           network_stats(mentalmodel$users[[x]][["graph"]]) |>
             mutate(user = x)

@@ -2,8 +2,8 @@
 
 S3method(plot,mtoolr)
 S3method(print,mtoolr)
+export(aggregate_mentalmodel)
 export(calculate_descriptive_statistics)
-export(get_aggregated)
 export(get_user_el)
 export(igraph_from_mtools_el)
 export(is_mtoolr)
