@@ -8,12 +8,13 @@ is_mtoolr(object)
 }
 \arguments{
 \item{object}{An R object}
-
-\item{aggregated}{Is this an aggreagated mental model?}
 }
 \value{
 TRUE if the object is of class mtoolr
 }
 \description{
 Is the object of class mtoolr?
+}
+\examples{
+is_mtoolr(example_models)
 }

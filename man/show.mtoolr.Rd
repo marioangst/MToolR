@@ -9,6 +9,9 @@ show.mtoolr(x)
 \arguments{
 \item{x}{The mtoolr object}
 }
+\value{
+
+}
 \description{
 Default mental model show method
 }

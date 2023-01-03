@@ -3,16 +3,29 @@
 #' Is the object of class mtoolr?
 #'
 #' @param object An R object
-#' @param aggregated Is this an aggreagated mental model?
 #'
 #' @return TRUE if the object is of class mtoolr
 #' @export
 #'
 #' @examples
+#' is_mtoolr(example_models)
 is_mtoolr <- function(object){
   "mtoolr" %in% class(object)
 }
 
+#' mtoolr object constructor
+#'
+#' This is the internal object constructor for the mtoolr package.
+#' The user should generally not have to engage with it.
+#'
+#' @param x A list object passing `is_valid_mtool_edgelist`
+#' @param aggregated A boolean - is the object aggregated?
+#' @param concepts An optional list of unique concepts in the mental model. Present to guard against the case of isolates after aggregation.
+#'
+#' @return
+#' @export
+#'
+#' @examples
 new_mtoolr <- function(x = list(),
                        aggregated = logical(),
                        concepts = NULL){
@@ -38,6 +51,7 @@ new_mtoolr <- function(x = list(),
       !(is_valid_mtool_edgelist(x))){
       stop("The provided mtool edgelist is not valid")
     }
+    check_mtool_columns_exist(x)
     mentalmodel$users <- users_graphs_constructor(edgelist = mentalmodel$data,
                                                   user_list = mentalmodel$user_data$id,
                                                   concepts = mentalmodel$concepts)
@@ -47,9 +61,24 @@ new_mtoolr <- function(x = list(),
             aggregated = aggregated)
 }
 
+#' Create a mtoolr object
+#'
+#' This function creates a mtoolr object from a data frame parsed from MTool output.
+#' This function is useful if you want to process exported data from MTool before passing it to MToolR.
+#' The safest and easiest way to import MTool data directly is to use the `mentalmodel_from_csv()`
+#' function however.
+#'
+#' @param x An object to be converted to a mtoolr object for further analysis. Likely a data frame
+#' with at least User_ID, To, From and Weight columns specifying mental model edges by user.
+#' @param aggregated Is the object an aggregated model? Defaults to FALSE.
+#'
+#' @return A object of class mtoolr
+#' @export
+#'
+#' @examples
 mentalmodel <- function(x,
                         aggregated = FALSE){
-  new_mtoolr(x)
+  new_mtoolr(x,aggregated = aggregated)
 }
 
 add_user_data <- function(mentalmodel,
@@ -69,7 +98,7 @@ add_user_data <- function(mentalmodel,
 is_valid_mtool_edgelist <- function(edgelist){
   all(
     is.list(edgelist),
-    check_mtool_columns_exist(edgelist))
+    check_necessary_mtool_columns_exist(edgelist))
 }
 
 is_valid_user_data <- function(mentalmodel,user_data, id_key){
@@ -81,7 +110,14 @@ is_aggregated <- function(x){
 }
 
 check_mtool_columns_exist <- function(x){
-  MTOOL_EXPORT_COLUMNS %in% colnames(x)
+  missing <- MTOOL_EXPORT_COLUMNS[!(MTOOL_EXPORT_COLUMNS %in% colnames(x))]
+  if(length(missing) > 0){
+    logger::log_warn(paste0(c("Usually expected columns", missing, "not in data frame"),collapse = " "))
+  }
+}
+
+check_necessary_mtool_columns_exist <- function(x){
+  MTOOL_EXPORT_COLUMNS_NECESSARY %in% colnames(x)
 }
 
 check_group_var_is_valid <- function(mentalmodel,
@@ -172,15 +208,22 @@ users_graphs_constructor <- function(edgelist, user_list, concepts){
   return(user_graph_list)
 }
 
-MTOOL_EXPORT_COLUMNS <- c("User_ID",
-                          "Total_Start",
-                          "Total_Duration",
-                          "Type",
-                          "Start",
-                          "Duration",
-                          "From",
-                          "To",
-                          "Weight",
-                          "X",
-                          "Y")
+MTOOL_EXPORT_COLUMNS_NECESSARY <-
+  c("User_ID",
+    "From",
+    "To",
+    "Weight")
+
+MTOOL_EXPORT_COLUMNS <-
+  c("User_ID",
+    "Total_Start",
+    "Total_Duration",
+    "Type",
+    "Start",
+    "Duration",
+    "From",
+    "To",
+    "Weight",
+    "X",
+    "Y")
 

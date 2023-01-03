@@ -11,6 +11,9 @@ plot_user_model(user, mentalmodel, ...)
 
 \item{mentalmodel}{A mtoolr object containing the mental model of the user}
 }
+\value{
+
+}
 \description{
 Plot the mental model of a specific user
 }
