@@ -17,4 +17,5 @@ Is the object of class mtoolr?
 }
 \examples{
 is_mtoolr(example_models)
+is_mtoolr(mtcars)
 }

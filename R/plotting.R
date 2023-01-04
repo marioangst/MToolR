@@ -1,30 +1,47 @@
 
 #' Default mental model plot function using ggraph
 #'
-#' @param mentalmodel An object of type mtoolr
+#' If data on multiple users are supplied, a sample user model is plotted.
+#' If you supply a user argument, you can plot the model of a specific user.
+#' If aggregated data are supplied, the aggregated model is plotted.
 #'
-#' @return A plot
+#' @param mentalmodel An object of type mtoolr
+#' @param ... other parameters to ggraph, eg. layout choice - normally defaults
+#' to "stress"
+#' Check the graphlayouts package for more options, eg. "circle" or "sugiyama"
+#'
+#' @return A ggplot object
 #' @export
 #'
 #' @examples
-plot.mtoolr <- function(mentalmodel, ...){
+#' # NOT RUN
+#' # #plot a random user model
+#' # plot(example_models)
+#' # #plot a specific user
+#' # plot(example_models, user = "ad84c4ed-b73e-4ba2-8e1f-edbe365bb225")
+#' # #aggregate and then plot
+#' # aggregated_model <- aggregate_mentalmodel(example_models)
+#' # plot(aggregated_model)
+plot.mtoolr <- function(mentalmodel, user = NULL, ...){
   if(is_aggregated(mentalmodel)){
     logger::log_info("Plotting aggregated mental model")
     p <- mental_model_ggraph(mentalmodel$graph, ...)
     return(p)
   }
   if(!is_aggregated(mentalmodel)){
-    user_sample <-
-      sample(mentalmodel$user_data$id,
-           1, replace = FALSE)
-    logger::log_info("Plotting randomly selected user models: {user_sample}")
+    if(is.null(user)){
+      user <-
+        sample(mentalmodel$user_data$id,
+               1, replace = FALSE)
+      logger::log_info("Plotting randomly selected user models: {user}")
+    }
     p <-
-      plot_user_model(user_sample,
+      plot_user_model(user,
                       mentalmodel,
                       layout = "stress") +
       ggplot2::ggtitle(
         "Mental model sample",
-        subtitle = paste0("user ",user_sample))
+        subtitle = paste0("user ",user))
     return(p)
   }
 }
@@ -66,10 +83,11 @@ mental_model_ggraph <- function(graph, ...){
 #' @param mentalmodel A mtoolr object containing the mental model of the user
 #' @param user The id of the user
 #'
-#' @return
+#' @return A ggplot object
 #' @export
 #'
 #' @examples
+#' # plot_user_model(example_models, user = "ad84c4ed-b73e-4ba2-8e1f-edbe365bb225")
 plot_user_model <- function(user, mentalmodel, ...){
   g <- get_user_graph(user, mentalmodel)
   mental_model_ggraph(g,...)

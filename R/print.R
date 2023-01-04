@@ -9,10 +9,12 @@
 #'
 #' @examples
 print.mtoolr <- function(x,...){
-  logger::log_info("Data imported from MTool on links between concepts:")
+  logger::log_info("Data on links between concepts:")
   print(x$data)
-  logger::log_info("Data on individual users:")
-  print(x$user_data)
+  if(!is_aggregated(x)){
+    logger::log_info("Data on individual users:")
+    print(x$user_data)
+  }
   if (is_aggregated(x)){
     logger::log_info("Aggregated graph object:")
     print(x$graph)

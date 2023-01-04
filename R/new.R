@@ -9,6 +9,7 @@
 #'
 #' @examples
 #' is_mtoolr(example_models)
+#' is_mtoolr(mtcars)
 is_mtoolr <- function(object){
   "mtoolr" %in% class(object)
 }
@@ -40,13 +41,14 @@ new_mtoolr <- function(x = list(),
   if(!is.null(concepts)){
     mentalmodel$concepts <- concepts
   }
-  mentalmodel$user_data <- tibble(
-    id = unique(mentalmodel$data$User_ID)
-  )
+
   mentalmodel$graph <- igraph_from_mtools_el(x,
                                              concepts = mentalmodel$concepts)
 
   if(!(aggregated)){
+    mentalmodel$user_data <- tibble::tibble(
+      id = unique(mentalmodel$data$User_ID)
+    )
     if(
       !(is_valid_mtool_edgelist(x))){
       stop("The provided mtool edgelist is not valid")
@@ -76,11 +78,33 @@ new_mtoolr <- function(x = list(),
 #' @export
 #'
 #' @examples
+#'
+#' minimal_df <- data.frame(User_ID = c("User1"), To = c("Concept1"), From = c("Concept2"), Weight = c(2))
+#' mentalmodel(minimal_df)
 mentalmodel <- function(x,
                         aggregated = FALSE){
   new_mtoolr(x,aggregated = aggregated)
 }
 
+#' Add additional data on users to an mtoolr object
+#'
+#' This function allows you to add additional data on users who created mental
+#' models, eg. age, gender, whether they like cycling... This data can then
+#' be used to eg. aggregate or compare models by variables.
+#'
+#' @param mentalmodel An mtoolr object to add data to
+#' @param user_data A data frame containing at least a column to match
+#' user M-Tool user ids. It must contain an entry for all users.
+#' @param id_key The key of the data frame column to match M-Tool user ids.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' # simulate user data to add, including a column "id" to match M-Tool user data
+#' user_df <- data.frame(id = example_models$user_data$id,var = rnorm(length(example_models$user_data$id)))
+#' # add user data by matching on column "id
+#' example_models <- example_models |> add_user_data(user_data = user_df,id_key = "id")
 add_user_data <- function(mentalmodel,
                           user_data,
                           id_key){
@@ -90,8 +114,9 @@ add_user_data <- function(mentalmodel,
   }
 
   joined_data <- mentalmodel$user_data |> dplyr::right_join(user_data, by = c("id" = id_key))
-
+  n_new_cols <- ncol(joined_data) - ncol(mentalmodel$user_data)
   mentalmodel$user_data <- joined_data
+  logger::log_info("Added {n_new_cols} to the data")
   return(mentalmodel)
 }
 

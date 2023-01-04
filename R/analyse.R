@@ -1,22 +1,39 @@
 
 
-#' Create aggregate edgelist from M-Tool Data
+#' Aggregate mental models from different users
 #'
-#' This function returns a mental model aggregating all
-#' individual mental models in a mtoolr object.
-#' The current default aggregation function is the median weight.
+#' This function aggregates individual mental models in an mtoolr object.
+#' If a grouping variable (eg. a column "likes_cycling" added to the object, see `add_user_data()`) is supplied
+#' and a grouping value (eg. "yes") is supplied, only mental
+#' models of this group are aggregated (so only the mental models of users who like cycling).
+#' Currently, models are aggregated using the median value of edge weights to establish edges and edge weight.
 #'
 #' @param mentalmodel A mtoolr object
+#' @param aggregate_function Currently, this defaults to the median value.
+#' @param group_var A character string giving a (preferably factor) variable in the user data to group by (eg. "likes_cycling").
+#' @param group_value A value in group_var to match by (eg. "yes")
 #'
-#' @return A aggregated mtoolr object
+#' @return An aggregated mtoolr object
 #' @export
 #'
 #' @examples
+#' # aggregate all models in example data
+#' aggregate_mentalmodel(example_models)
+#' # simulate user data to add
+#' user_df <- data.frame(id = example_models$user_data$id,var = rnorm(length(example_models$user_data$id)))
+#' user_df$group <- ifelse(user_df$var > 0, "group1","group2")
+#' # add user data
+#' example_models <- example_models |> add_user_data(user_data = user_df,id_key = "id")
+#' # aggregate by group
+#' agg_model_group1 <- aggregate_mentalmodel(example_models,group_var = "group",group_value = "group1")
+#' agg_model_group1
 aggregate_mentalmodel <- function(mentalmodel,
                                   aggregate_function = "median",
                                   group_var = NULL,
                                   group_value = NULL){
-  stopifnot(is_mtoolr(mentalmodel))
+  if(!(is_mtoolr(mentalmodel))){
+    stop("The supplied object is not a mtoolr object. Did you forget to use `mentalmodel()`?")
+  }
   stopifnot(!(is_aggregated(mentalmodel)))
   edgelist <- mentalmodel$data
   if(!(is.null(group_var))){
@@ -74,7 +91,7 @@ get_group_subset_ids <- function(value, group_var, x){
 #' - weighted outdegree
 #' - weighted total degree
 #'
-#' If a aggregated mental model is supplied, statistics
+#' If an aggregated mental model is supplied, statistics
 #' are returned for all aggregated groups.
 #'
 #' If a mental model object with individual user data is
@@ -83,6 +100,11 @@ get_group_subset_ids <- function(value, group_var, x){
 #' @export
 #'
 #' @examples
+#' # This returns statistics for each concept by user
+#' calculate_descriptive_statistics(example_models)
+#' # If an aggregated object is supplied, statistics are supplied for the in the aggregate
+#' aggregated_model <- aggregate_mentalmodel(example_models)
+#' calculate_descriptive_statistics(aggregated_model)
 calculate_descriptive_statistics <- function(mentalmodel){
 
   if(is_aggregated(mentalmodel)){
@@ -96,7 +118,7 @@ calculate_descriptive_statistics <- function(mentalmodel){
         mentalmodel$user_data$id,
         function(x){
           network_stats(mentalmodel$users[[x]][["graph"]]) |>
-            mutate(user = x)
+            dplyr::mutate(user = x)
         }
       ))
     )

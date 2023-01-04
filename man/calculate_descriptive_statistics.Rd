@@ -17,7 +17,7 @@ A tibble with the following stats:
 - weighted outdegree
 - weighted total degree
 
-If a aggregated mental model is supplied, statistics
+If an aggregated mental model is supplied, statistics
 are returned for all aggregated groups.
 
 If a mental model object with individual user data is
@@ -25,4 +25,11 @@ supplied, statistics are returned per user.
 }
 \description{
 Create overview stats for a mental model
+}
+\examples{
+# This returns statistics for each concept by user
+calculate_descriptive_statistics(example_models)
+# If an aggregated object is supplied, statistics are supplied for the in the aggregate
+aggregated_model <- aggregate_mentalmodel(example_models)
+calculate_descriptive_statistics(aggregated_model)
 }

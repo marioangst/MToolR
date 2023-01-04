@@ -3,6 +3,8 @@ library(MToolR)
 # this reads an example MToolR export provided by Karlijn for which IDs have been reshuffled to anonymize it
 # and saves it as a readable MtoolR object to data/ and as a csv file to inst/extdata
 
+example_models_df <- MToolR::parse_mtool_csv("data-raw/example_export.csv",
+                                             exclude_nonresponse = TRUE)
 example_models <-
   MToolR::mentalmodel_from_csv("data-raw/example_export.csv",
                                exclude_nonresponse = TRUE)
@@ -12,4 +14,5 @@ file.copy(from = "data-raw/example_export.csv",
 file.copy(from = "data-raw/example_export.csv",
           to = "tests/testthat/example_export.csv",
           overwrite = TRUE)
-usethis::use_data(example_models, overwrite = TRUE)
+usethis::use_data(example_models_df, overwrite = TRUE) # save the example dataframe
+usethis::use_data(example_models, overwrite = TRUE) # save the example mtoolr object

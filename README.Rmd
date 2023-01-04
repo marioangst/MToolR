@@ -24,7 +24,7 @@ The package provides:
   b) procedures for common (basic) analytical tasks
   c) visualization functions
   
-⚠️ This package is literally a couple of hours old - it's under development and use it at your own peril at the moment ⚠️
+⚠️ This package is at a relatively solid beta stage, with some documentation lacking. Further features are planned. We welcome feedback. ⚠️
 
 ## Installation
 
@@ -37,34 +37,34 @@ devtools::install_github("marioangst/MToolR")
 
 ## Example 1: Read in .csv file exported from M-Tool, aggregate and visualize
 
-Say you have exported a file called "test_export.csv" from M-Tool and have saved it in a folder data/. Here is how to read it into R and create a first plot for a user.
+Say you have exported a file called "example_export.csv" from M-Tool and have saved it in a folder data-raw/. Here is how to read it into R and create a first plot for a random user.
 
 ```{r example1, warning=FALSE}
 library(MToolR)
 
-mtool_data <-
-  MToolR::parse_mtools_csv("data/test_export.csv", 
+mentalmodels <-
+  MToolR::mentalmodel_from_csv("data-raw/example_export.csv", 
                            exclude_nonresponse = TRUE)
 
-plot_user_model(mtool_data, layout = "circle",
-                user = mtool_data$User_ID[50])
+plot(mentalmodels, user = "ad84c4ed-b73e-4ba2-8e1f-edbe365bb225")
 
 ```
 
-## Example 2: Calculate overview stats for the aggregate model and a user model
+## Example 2: Aggregate models and calculate descriptive statistics
 
-These are functions operating on igraph objects, so a lot is possible. At present, weighted betweenness and degrees are implemented.
+These are functions operating on igraph objects, so a lot is possible.
 
-Here for an aggregate example:
+Let's first aggregate mental models using median edge weights and plot the aggregated model.
 
-```{r}
-calculate_aggregate_stats(mtool_data)
+```{r, warning=FALSE}
+mentalmodels_agg <- aggregate_mentalmodel(mentalmodels)
+plot(mentalmodels_agg)
 ```
 
-And for a specific user:
+We can then calculate some first summary statistics for the aggregated model:
 
 ```{r}
-calculate_user_stats(mtool_data, user = mtool_data$User_ID[100])
+calculate_descriptive_statistics(mentalmodels_agg)
 ```
 
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/parse.R
 \name{mentalmodel_from_csv}
 \alias{mentalmodel_from_csv}
-\title{Parse CSV file exported by M-Tool}
+\title{Import CSV file exported by M-Tool as mtoolr object}
 \usage{
 mentalmodel_from_csv(csv_file, exclude_nonresponse = TRUE)
 }
@@ -15,5 +15,10 @@ mentalmodel_from_csv(csv_file, exclude_nonresponse = TRUE)
 An object of class mtoolr containing all information included in the M-Tool export
 }
 \description{
-Parse CSV file exported by M-Tool
+Import CSV file exported by M-Tool as mtoolr object
+}
+\examples{
+csv_path <- system.file("extdata", "example_export.csv", package = "MToolR", mustWork = TRUE)
+mental_model <- mentalmodel_from_csv(csv_path, exclude_nonresponse = TRUE)
+mental_model
 }

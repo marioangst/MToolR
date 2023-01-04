@@ -21,3 +21,8 @@ This function is useful if you want to process exported data from MTool before p
 The safest and easiest way to import MTool data directly is to use the `mentalmodel_from_csv()`
 function however.
 }
+\examples{
+
+minimal_df <- data.frame(User_ID = c("User1"), To = c("Concept1"), From = c("Concept2"), Weight = c(2))
+mentalmodel(minimal_df)
+}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/analyse.R
 \name{aggregate_mentalmodel}
 \alias{aggregate_mentalmodel}
-\title{Create aggregate edgelist from M-Tool Data}
+\title{Aggregate mental models from different users}
 \usage{
 aggregate_mentalmodel(
   mentalmodel,
@@ -13,12 +13,32 @@ aggregate_mentalmodel(
 }
 \arguments{
 \item{mentalmodel}{A mtoolr object}
+
+\item{aggregate_function}{Currently, this defaults to the median value.}
+
+\item{group_var}{A character string giving a (preferably factor) variable in the user data to group by (eg. "likes_cycling").}
+
+\item{group_value}{A value in group_var to match by (eg. "yes")}
 }
 \value{
-A aggregated mtoolr object
+An aggregated mtoolr object
 }
 \description{
-This function returns a mental model aggregating all
-individual mental models in a mtoolr object.
-The current default aggregation function is the median weight.
+This function aggregates individual mental models in an mtoolr object.
+If a grouping variable (eg. a column "likes_cycling" added to the object, see `add_user_data()`) is supplied
+and a grouping value (eg. "yes") is supplied, only mental
+models of this group are aggregated (so only the mental models of users who like cycling).
+Currently, models are aggregated using the median value of edge weights to establish edges and edge weight.
+}
+\examples{
+# aggregate all models in example data
+aggregate_mentalmodel(example_models)
+# simulate user data to add
+user_df <- data.frame(id = example_models$user_data$id,var = rnorm(length(example_models$user_data$id)))
+user_df$group <- ifelse(user_df$var > 0, "group1","group2")
+# add user data
+example_models <- example_models |> add_user_data(user_data = user_df,id_key = "id")
+# aggregate by group
+agg_model_group1 <- aggregate_mentalmodel(example_models,group_var = "group",group_value = "group1")
+agg_model_group1
 }
