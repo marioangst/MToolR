@@ -1,4 +1,51 @@
 
+#' Default mental model plot function using ggraph
+#'
+#' If data on multiple users are supplied, a sample user model is plotted.
+#' If you supply a user argument, you can plot the model of a specific user.
+#' If aggregated data are supplied, the aggregated model is plotted.
+#'
+#' @param mentalmodel An object of type mtoolr
+#' @param ... other parameters to ggraph, eg. layout choice - normally defaults
+#' to "stress"
+#' Check the graphlayouts package for more options, eg. "circle" or "sugiyama"
+#'
+#' @return A ggplot object
+#' @export
+#'
+#' @examples
+#' # NOT RUN
+#' # #plot a random user model
+#' # plot(example_models)
+#' # #plot a specific user
+#' # plot(example_models, user = "ad84c4ed-b73e-4ba2-8e1f-edbe365bb225")
+#' # #aggregate and then plot
+#' # aggregated_model <- aggregate_mentalmodel(example_models)
+#' # plot(aggregated_model)
+plot.mtoolr <- function(mentalmodel, user = NULL, ...){
+  if(is_aggregated(mentalmodel)){
+    logger::log_info("Plotting aggregated mental model")
+    p <- mental_model_ggraph(mentalmodel$graph, ...)
+    return(p)
+  }
+  if(!is_aggregated(mentalmodel)){
+    if(is.null(user)){
+      user <-
+        sample(mentalmodel$user_data$id,
+               1, replace = FALSE)
+      logger::log_info("Plotting randomly selected user models: {user}")
+    }
+    p <-
+      plot_user_model(user,
+                      mentalmodel,
+                      layout = "stress") +
+      ggplot2::ggtitle(
+        "Mental model sample",
+        subtitle = paste0("user ",user))
+    return(p)
+  }
+}
+
 #' A ggraph plotting setup for mental model data
 #'
 #' @param graph Igraph object based on mental model data
@@ -11,7 +58,8 @@
 #'
 #' @examples
 mental_model_ggraph <- function(graph, ...){
-  ggraph::ggraph(graph, ...) +
+  p <-
+    ggraph::ggraph(graph, ...) +
     ggraph::geom_edge_fan(ggplot2::aes(start_cap =
                                          ggraph::label_rect(node1.name,
                                                             padding =
@@ -24,36 +72,23 @@ mental_model_ggraph <- function(graph, ...){
                           arrow = ggplot2::arrow(length = ggplot2::unit(4, 'mm'))) +
     ggraph::geom_node_label(ggplot2::aes(label = name),
                             label.padding = ggplot2::unit(0.2, "lines"),) +
-    ggraph::scale_edge_width(range = c(1,3)) +
+    ggraph::scale_edge_width(range = c(0.5,1.5)) +
     ggraph::theme_graph() +
     ggplot2::coord_cartesian(clip = 'off')
+  return(p)
 }
 
-#' Plot the aggregate model from an edgelist supplied by M-Tool
+#' Plot the mental model of a specific user
 #'
-#' @param edgelist Likely a raw edgelist data frame generated from parse_mtools_csv().
+#' @param mentalmodel A mtoolr object containing the mental model of the user
+#' @param user The id of the user
 #'
 #' @return A ggplot object
 #' @export
 #'
 #' @examples
-plot_aggregate_model <- function(edgelist, ...){
-  agg_el <- MToolR::get_aggregate_el(edgelist)
-  g <- igraph_from_mtools_el(agg_el)
-  mental_model_ggraph(g, ...)
-}
-
-#' Plot the mental model of a specific user
-#'
-#' @param edgelist Likely a raw edgelist data frame generated from parse_mtools_csv().
-#' @param user A user ID as appearing in the User_ID column of the edgelist supplied
-#'
-#' @return
-#' @export
-#'
-#' @examples
-plot_user_model <- function(edgelist, user, ...){
-  user_el <- MToolR::get_user_el(edgelist, user)
-  g <- igraph_from_mtools_el(user_el)
-  mental_model_ggraph(g, ...)
+#' # plot_user_model(example_models, user = "ad84c4ed-b73e-4ba2-8e1f-edbe365bb225")
+plot_user_model <- function(user, mentalmodel, ...){
+  g <- get_user_graph(user, mentalmodel)
+  mental_model_ggraph(g,...)
 }

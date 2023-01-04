@@ -4,10 +4,14 @@
 \alias{mental_model_ggraph}
 \title{A ggraph plotting setup for mental model data}
 \usage{
-mental_model_ggraph(graph)
+mental_model_ggraph(graph, ...)
 }
 \arguments{
 \item{graph}{Igraph object based on mental model data}
+
+\item{...}{other parameters to ggraph, eg. layout choice - normally defaults
+to "stress"
+Check the graphlayouts package for more options, eg. "circle" or "sugiyama"}
 }
 \value{
 A ggplot object

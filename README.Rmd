@@ -24,7 +24,7 @@ The package provides:
   b) procedures for common (basic) analytical tasks
   c) visualization functions
   
-⚠️ This package is literally a couple of hours old - it's under development and use it at your own peril at the moment ⚠️
+⚠️ This package is at a relatively solid beta stage, with some documentation lacking. Further features are planned. We welcome feedback. ⚠️
 
 ## Installation
 
@@ -35,37 +35,102 @@ You can install the development version of MToolR from [GitHub](https://github.c
 devtools::install_github("marioangst/MToolR")
 ```
 
-## Example 1: Read in .csv file exported from M-Tool, aggregate and visualize
+## Example 1: Read in .csv file exported from M-Tool, visualize a user model and calculate some statistics for the user
 
-Say you have exported a file called "test_export.csv" from M-Tool and have saved it in a folder data/. Here is how to read it into R and create a first plot for a user.
+Say you have exported a file called "example_export.csv" from M-Tool and have saved it in a folder data-raw/. Here is how to read it into R and create a first plot for a random user.
 
 ```{r example1, warning=FALSE}
 library(MToolR)
 
-mtool_data <-
-  MToolR::parse_mtools_csv("data/test_export.csv", 
+mentalmodels <-
+  MToolR::mentalmodel_from_csv("data-raw/example_export.csv", 
                            exclude_nonresponse = TRUE)
 
-plot_user_model(mtool_data, layout = "circle",
-                user = mtool_data$User_ID[50])
+plot(mentalmodels, user = "ad84c4ed-b73e-4ba2-8e1f-edbe365bb225")
 
 ```
 
-## Example 2: Calculate overview stats for the aggregate model and a user model
-
-These are functions operating on igraph objects, so a lot is possible. At present, weighted betweenness and degrees are implemented.
-
-Here for an aggregate example:
+The mental models of users are stored as igraph graph objects for each user. This makes it possible to calculate almost any network statistic imaginable by retrieving the graph. 
 
 ```{r}
-calculate_aggregate_stats(mtool_data)
+g <- get_user_graph(user = "ad84c4ed-b73e-4ba2-8e1f-edbe365bb225",
+                    x = mentalmodels)
+g
 ```
 
-And for a specific user:
+
+We have implemented some simple descriptive statistics in a convenience function already:
 
 ```{r}
-calculate_user_stats(mtool_data, user = mtool_data$User_ID[100])
+calculate_descriptive_statistics(mentalmodel = mentalmodels)
 ```
+
+
+## Example 2: Similarities between mental models
+
+It can be interesting to explore how similar the mental models of different users are. MToolR implements a function to do so, based on different graph similiarity metrics and which can also calculate similarities within different user groups.
+
+Let's calculate the similarity matrix for the mental models of all users in our example dataset.
+
+```{r}
+sim_mat <- get_model_sims(mentalmodel = mentalmodels)
+```
+
+The raw similarity matrix can the be further processed in many possible ways, for example as an input to a clustering algorithm to find groups of users with similar mental models. We'll plot a quick heatmap here, to show what is possible.
+
+```{r}
+heatmap(sim_mat)
+```
+
+In case you are wondering: There is very little similarity between user mental models in this example data because we randomly shuffled user IDs to anonymize the date ;)
+
+## Example 3: Aggregate models and calculate descriptive statistics
+
+Often it is interesting to explore aggregated models of all M-Tool respondents - a sort of meta-model.
+
+Let's first aggregate mental models using median edge weights and plot the aggregated model.
+
+```{r, warning=FALSE}
+mentalmodels_agg <- aggregate_mentalmodel(mentalmodels)
+plot(mentalmodels_agg)
+```
+
+We can then also calculate some descriptive statistics for the aggregated model.
+
+```{r}
+calculate_descriptive_statistics(mentalmodels_agg)
+```
+
+## Example 4: Add additional data on users
+
+Often, we might have collected additional data on users providing mental models. We can add this data to a mtoolr object using add_user_data().
+
+Here, we are just going to simulate some data. It's important that our user data contains a column matching users to their M-Tool user id.
+
+```{r}
+# simulate user data to add
+user_df <- data.frame(id = example_models$user_data$id,
+                      user_likes_bicycles = rbinom(length(example_models$user_data$id),
+                                                   size = 1,prob = 0.5))
+user_df
+```
+
+Now we can add the user data to the mtoolr object we created earlier:
+
+```{r}
+# add user data
+mentalmodels <- mentalmodels |> add_user_data(user_data = user_df,
+                                                  id_key = "id")
+```
+We can use this data now for example to aggregate models by group (here for users who like bicycles) and plot the group model.
+
+```{r warning=FALSE}
+agg_model_likes_bicycles <- aggregate_mentalmodel(
+  mentalmodels, group_var = "user_likes_bicycles", group_value = 1
+)
+plot(agg_model_likes_bicycles)
+```
+
 
 
 <!-- build this with devtools::build_readme() -->
