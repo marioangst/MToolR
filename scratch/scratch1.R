@@ -3,7 +3,7 @@ devtools::document()
 devtools::load_all()
 
 test <-
-  MToolR::mentalmodel_from_csv("tests/test_export.csv",
+  MToolR::mentalmodel_from_csv("data-raw/example_export.csv",
                                exclude_nonresponse = TRUE)
 
 test

@@ -31,9 +31,7 @@ aggregate_mentalmodel <- function(mentalmodel,
                                   aggregate_function = "median",
                                   group_var = NULL,
                                   group_value = NULL){
-  if(!(is_mtoolr(mentalmodel))){
-    stop("The supplied object is not a mtoolr object. Did you forget to use `mentalmodel()`?")
-  }
+  stop_if_not_mtoolr(mentalmodel)
   stopifnot(!(is_aggregated(mentalmodel)))
   edgelist <- mentalmodel$data
   if(!(is.null(group_var))){

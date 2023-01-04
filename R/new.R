@@ -14,6 +14,13 @@ is_mtoolr <- function(object){
   "mtoolr" %in% class(object)
 }
 
+stop_if_not_mtoolr <- function(object){
+  if(!(is_mtoolr(object))){
+    stop("Object supplied is not an mtoolr object.
+         You can create an mtoolr object with eg. `mentalmodel_from_csv()`")
+  }
+}
+
 #' mtoolr object constructor
 #'
 #' This is the internal object constructor for the mtoolr package.
@@ -116,7 +123,7 @@ add_user_data <- function(mentalmodel,
   joined_data <- mentalmodel$user_data |> dplyr::right_join(user_data, by = c("id" = id_key))
   n_new_cols <- ncol(joined_data) - ncol(mentalmodel$user_data)
   mentalmodel$user_data <- joined_data
-  logger::log_info("Added {n_new_cols} to the data")
+  logger::log_info("Added {n_new_cols} columns to the data")
   return(mentalmodel)
 }
 
@@ -156,7 +163,17 @@ check_group_var_is_valid <- function(mentalmodel,
   }
 }
 
+#' Get the igraph graph object for a given user
+#'
+#' @param user The id of the user as stored in the User_ID column of the M-Tool output.
+#' @param x A mtoolr object
+#'
+#' @return
+#' @export
+#'
+#' @examples
 get_user_graph <- function(user,x){
+  stop_if_not_mtoolr(x)
   x$users[[user]]$graph
 }
 

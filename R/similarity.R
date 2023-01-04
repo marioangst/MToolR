@@ -1,7 +1,38 @@
 
+#' Get similiarities between mental models of users
+#'
+#' This function calculates the similarity between the mental models of
+#' of users, either among all users or among groups of users.
+#'
+#' @param mentalmodel A mtoolr object with models from multiple users (therefore not an aggregated object)
+#' @param method The method to calculate similarity between mental models of users.
+#' At the moment, this defaults to "gower". Other options are "simple_overlap" and "jaccard".
+#' @param group_var A character string giving the name of a (preferably factor) variable in the user data to create
+#' groups of users. For each group of users, a similarity matrix is calculated. All matrices
+#' are returned in a list.
+#'
+#' @return If no group_var is supplied a similarity matrix. If a group_var is supplied
+#' a list of similarity matrices for each level of the grouping variable.
+#' @export
+#'
+#' @examples
+#' # get gower similarity between mental models of all users
+#' gower_sim_mat <- get_model_sims(example_models)
+#' gower_sim_mat
+#' # simulate user data to add
+#' user_df <- data.frame(id = example_models$user_data$id,var = rnorm(length(example_models$user_data$id)))
+#' user_df$group <- ifelse(user_df$var > 0, "group1","group2")
+#' # add user data
+#' example_models <- example_models |> add_user_data(user_data = user_df,id_key = "id")
+#' # compute similarities by group
+#' gower_sim_mat_list <- get_model_sims(example_models, group_var = "group")
 get_model_sims <- function(mentalmodel,
                            method = NULL,
                            group_var = NULL){
+  stop_if_not_mtoolr(mentalmodel)
+  if (is_aggregated(mentalmodel)){
+    stop("Model supplied is aggregated. Please supply a non-aggregated mtoolr object.")
+  }
   if (is.null(method)){
     method <- "gower"
     logger::log_info("Using Gower similarity, comparing only edge weights > 0 as default.")
@@ -18,7 +49,7 @@ get_model_sims <- function(mentalmodel,
     users_list <-
       lapply(levels_group_var,
              get_group_subset_ids,
-             mentalmodel = mentalmodel,
+             x = mentalmodel,
              group_var = group_var)
     sims_list <-
       lapply(users_list,
