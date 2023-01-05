@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{The mental model}
 
-\item{...}{}
+\item{...}{Further arguments to print}
 }
 \value{
 Prints a tibble of the raw data and the combined graph object
