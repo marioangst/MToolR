@@ -2,6 +2,10 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^README\.Rmd$
+<<<<<<< HEAD
+=======
+^data-raw$
+>>>>>>> 11dfaa35e6e499aa3c61fc3267ca61f2ae19a31e
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
