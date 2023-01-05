@@ -4,7 +4,7 @@
 \alias{get_model_sims}
 \title{Get similiarities between mental models of users}
 \usage{
-get_model_sims(mentalmodel, method = NULL, group_var = NULL)
+get_model_sims(mentalmodel, method = NULL, group_var = NULL, output = "matrix")
 }
 \arguments{
 \item{mentalmodel}{A mtoolr object with models from multiple users (therefore not an aggregated object)}
@@ -15,10 +15,14 @@ At the moment, this defaults to "gower". Other options are "simple_overlap" and 
 \item{group_var}{A character string giving the name of a (preferably factor) variable in the user data to create
 groups of users. For each group of users, a similarity matrix is calculated. All matrices
 are returned in a list.}
+
+\item{output}{Either "matrix" or "tibble". If "matrix, a similarity matrix is returned.
+If "tibble" a tibble dataframe of pairs of users with similarities is returned. Defaults
+to "matrix"}
 }
 \value{
-If no group_var is supplied a similarity matrix. If a group_var is supplied
-a list of similarity matrices for each level of the grouping variable.
+If no group_var is supplied a similarity matrix or tibble, depending on
+output chosen. If a group_var is supplied a list of similarity matrices for each level of the grouping variable.
 }
 \description{
 This function calculates the similarity between the mental models of

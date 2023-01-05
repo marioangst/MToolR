@@ -4,6 +4,13 @@ test_that("similarities are computed in square matrix for all users with diagona
   expect_true(all(diag(gower_sim_mat) == 1))
 })
 
+test_that("tibble of similarities is returned and is of length n users squared minus n users", {
+  gower_sim_df <- get_model_sims(example_models, output = "tibble")
+  n_users <- nrow(example_models$user_data)
+  expect_true(tibble::is_tibble(gower_sim_df))
+  expect_true(nrow(gower_sim_df) == (n_users*n_users)-n_users)
+})
+
 test_that("grouped similarities are computed in list of square matrices for all users with diagonal of 1s*", {
   # simulate user data to add
   user_df <- data.frame(id = example_models$user_data$id,var = rnorm(length(example_models$user_data$id)))

@@ -5,13 +5,7 @@
 \alias{example_models_df}
 \title{Example data frame from anonymized MTool export}
 \format{
-## `example_models_df`
-A data frame object from a MTool csv export on
-\describe{
-  \item{53 users}
-  \item{17 concepts}
-  \item{992 mental model links}
-}
+An object of class \code{data.frame} with 392 rows and 11 columns.
 }
 \usage{
 example_models_df

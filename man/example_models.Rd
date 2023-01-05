@@ -5,13 +5,7 @@
 \alias{example_models}
 \title{Example mtoolr class object from anonymized MTool export}
 \format{
-## `example_models`
-A mtoolr object from a MTool csv export on
-\describe{
-  \item{53 users}
-  \item{17 concepts}
-  \item{992 mental model links}
-}
+An object of class \code{mtoolr} of length 5.
 }
 \usage{
 example_models

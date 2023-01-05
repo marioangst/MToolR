@@ -10,9 +10,12 @@
 #' @param group_var A character string giving the name of a (preferably factor) variable in the user data to create
 #' groups of users. For each group of users, a similarity matrix is calculated. All matrices
 #' are returned in a list.
+#' @param output Either "matrix" or "tibble". If "matrix, a similarity matrix is returned.
+#' If "tibble" a tibble dataframe of pairs of users with similarities is returned. Defaults
+#' to "matrix"
 #'
-#' @return If no group_var is supplied a similarity matrix. If a group_var is supplied
-#' a list of similarity matrices for each level of the grouping variable.
+#' @return If no group_var is supplied a similarity matrix or tibble, depending on
+#' output chosen. If a group_var is supplied a list of similarity matrices for each level of the grouping variable.
 #' @export
 #'
 #' @examples
@@ -28,8 +31,12 @@
 #' gower_sim_mat_list <- get_model_sims(example_models, group_var = "group")
 get_model_sims <- function(mentalmodel,
                            method = NULL,
-                           group_var = NULL){
+                           group_var = NULL,
+                           output = "matrix"){
   stop_if_not_mtoolr(mentalmodel)
+  if (!(output %in% c("matrix","tibble"))){
+    stop("output needs to be either \"matrix\" or \"tibble\"")
+  }
   if (is_aggregated(mentalmodel)){
     stop("Model supplied is aggregated. Please supply a non-aggregated mtoolr object.")
   }
@@ -61,13 +68,23 @@ get_model_sims <- function(mentalmodel,
   }
   else{
     users <- mentalmodel$user_data$id
-    sim_mat <- get_users_sim_mat(users,
-                                 mentalmodel = mentalmodel,
-                                 method = method)
-    return(sim_mat)
+    if (output == "matrix"){
+      sim_mat <- get_users_sim_mat(users,
+                                   mentalmodel = mentalmodel,
+                                   method = method)
+      return(sim_mat)
+    }
+    if (output == "tibble"){
+      sims_df <- get_users_sim_df(users = users,
+                                  mentalmodel = mentalmodel,
+                                  method = method)
+      return(sims_df)
+    }
   }
 
 }
+
+
 
 #' Get the similarity matrix between all of a group of users
 #'
@@ -99,6 +116,35 @@ get_users_sim_mat <- function(users,mentalmodel,method){
       )
     )
   return(sim_mat)
+}
+
+#' Get an tibble of similarities between all of a group of users
+#'
+#' @param users A character vector of user IDs
+#' @param mentalmodel A mtoolr object
+#' @param method The method to use (see `?get_model_sims` for available)
+#'
+#' @return A tibble of all user pairs with their similarities and the method used
+#' @export
+#'
+#' @examples
+get_users_sim_df <- function(users,mentalmodel,method){
+  combs <- expand.grid(users,users,stringsAsFactors = FALSE)
+  df <- tibble::tibble(
+    user1 = combs[,1],
+    user2 = combs[,2],
+    method = method
+  )
+  df$sim <- pbapply::pbapply(df,1,
+                  function(x)
+                    get_user_model_sim(
+                      user1 = x[1],
+                      user2 = x[2],
+                      mentalmodel = mentalmodel,
+                      method = method
+                    ))
+  df <- df[df$user1 != df$user2,]
+  return(df)
 }
 
 #' Get the similarity between two specific users

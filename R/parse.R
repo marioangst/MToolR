@@ -55,7 +55,8 @@ parse_mtool_csv <- function(csv_file,
       read.csv2(file = csv_file,
                 head = TRUE,
                 sep = ",",
-                fill = TRUE )
+                fill = TRUE,
+                encoding = "UTF-8")
     if(exclude_nonresponse){
       nonresponses <- edgelist$From == '' | edgelist$To == ''
       edgelist <- edgelist[!nonresponses,]
