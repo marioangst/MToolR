@@ -4,12 +4,14 @@
 \alias{plot_user_model}
 \title{Plot the mental model of a specific user}
 \usage{
-plot_user_model(user, mentalmodel, ...)
+plot_user_model(mentalmodel, user, ...)
 }
 \arguments{
+\item{mentalmodel}{A mtoolr object containing the mental model of the user}
+
 \item{user}{The id of the user}
 
-\item{mentalmodel}{A mtoolr object containing the mental model of the user}
+\item{...}{further arguments to ggraph}
 }
 \value{
 A ggplot object
