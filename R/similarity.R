@@ -69,6 +69,16 @@ get_model_sims <- function(mentalmodel,
 
 }
 
+#' Get the similarity matrix between all of a group of users
+#'
+#' @param users A character vector of user IDs
+#' @param mentalmodel A mtoolr object
+#' @param method The method to use (see `?get_model_sims` for available)
+#'
+#' @return A similarity matrix
+#' @export
+#'
+#' @examples
 get_users_sim_mat <- function(users,mentalmodel,method){
   sim_mat <- matrix(
     NA,
@@ -91,6 +101,17 @@ get_users_sim_mat <- function(users,mentalmodel,method){
   return(sim_mat)
 }
 
+#' Get the similarity between two specific users
+#'
+#' @param user1 A character string for user 1
+#' @param user2 A character string for user 2
+#' @param mentalmodel A mtoolr object
+#' @param method The method to use (see `?get_model_sims` for available)
+#'
+#' @return A numeric value between 0 and 1
+#' @export
+#'
+#' @examples
 get_user_model_sim <- function(user1,
                                user2,
                            mentalmodel,
@@ -147,8 +168,8 @@ gower_edgeset_similarity <- function(graph1,graph2){
 }
 
 jaccard_edgeset_similarity <- function(graph1, graph2) {
-  inter <- length(E(graph1 %s% graph2))
-  un <- length(E(graph1 %u% graph2))
+  inter <- length(igraph::E(graph1 %s% graph2))
+  un <- length(igraph::E(graph1 %u% graph2))
 
   if (un == 0) {
     0

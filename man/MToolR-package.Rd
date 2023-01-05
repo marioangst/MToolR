@@ -12,6 +12,7 @@ This is a companion R package for the Mental Model Mapping Tool M-Tool. https://
 Useful links:
 \itemize{
   \item \url{https://github.com/marioangst/MToolR}
+  \item \url{https://marioangst.github.io/MToolR}
   \item Report bugs at \url{https://github.com/marioangst/MToolR/issues}
 }
 
