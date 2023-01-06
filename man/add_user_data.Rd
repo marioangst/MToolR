@@ -14,9 +14,6 @@ user M-Tool user ids. It must contain an entry for all users.}
 
 \item{id_key}{The key of the data frame column to match M-Tool user ids.}
 }
-\value{
-
-}
 \description{
 This function allows you to add additional data on users who created mental
 models, eg. age, gender, whether they like cycling... This data can then

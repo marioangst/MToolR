@@ -11,9 +11,6 @@ get_user_graph(user, x)
 
 \item{x}{A mtoolr object}
 }
-\value{
-
-}
 \description{
 Get the igraph graph object for a given user
 }

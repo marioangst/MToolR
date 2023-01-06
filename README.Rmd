@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# MToolR
+# MToolR <a href="https://marioangst.github.io/MToolR/"><img src="man/figures/logo.png" align="right" height="139" /></a>
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -34,6 +34,8 @@ You can install the development version of MToolR from [GitHub](https://github.c
 # install.packages("devtools")
 devtools::install_github("marioangst/MToolR")
 ```
+
+⚠️ To install the package in this way you also need to have [RTools](https://cran.r-project.org/bin/windows/Rtools/) installed.
 
 ## Example 1: Read in .csv file exported from M-Tool, visualize a user model and calculate some statistics for the user
 
@@ -84,6 +86,22 @@ heatmap(sim_mat)
 
 In case you are wondering: There is very little similarity between user mental models in this example data because we randomly shuffled user IDs to anonymize the date ;)
 
+You can also return the similarities between each pair of users in a tibble data frame, by setting output to "tibble".
+
+```{r}
+sim_df <- get_model_sims(mentalmodel = mentalmodels, output = "tibble")
+
+sim_df
+```
+
+Let's for example look at the 10 users with the most similar models:
+
+```{r}
+sim_df |> 
+  dplyr::slice_max(order_by = sim, n = 10)
+```
+
+
 ## Example 3: Aggregate models and calculate descriptive statistics
 
 Often it is interesting to explore aggregated models of all M-Tool respondents - a sort of meta-model.
@@ -109,7 +127,7 @@ Here, we are just going to simulate some data. It's important that our user data
 
 ```{r}
 # simulate user data to add
-user_df <- data.frame(id = example_models$user_data$id,
+user_df <- tibble::tibble(id = example_models$user_data$id,
                       user_likes_bicycles = rbinom(length(example_models$user_data$id),
                                                    size = 1,prob = 0.5))
 user_df

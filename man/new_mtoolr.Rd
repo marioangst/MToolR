@@ -13,9 +13,6 @@ new_mtoolr(x = list(), aggregated = logical(), concepts = NULL)
 
 \item{concepts}{An optional list of unique concepts in the mental model. Present to guard against the case of isolates after aggregation.}
 }
-\value{
-
-}
 \description{
 This is the internal object constructor for the mtoolr package.
 The user should generally not have to engage with it.
