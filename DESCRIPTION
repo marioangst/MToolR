@@ -18,7 +18,8 @@ Suggests:
 Config/testthat/edition: 3
 RoxygenNote: 7.2.1
 URL: https://github.com/marioangst/MToolR,
-    https://marioangst.github.io/MToolR
+    https://marioangst.github.io/MToolR,
+    https://marioangst.github.io/MToolR/
 BugReports: https://github.com/marioangst/MToolR/issues
 Imports: 
     cluster,
