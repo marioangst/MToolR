@@ -214,8 +214,8 @@ gower_edgeset_similarity <- function(graph1,graph2){
 }
 
 jaccard_edgeset_similarity <- function(graph1, graph2) {
-  inter <- length(igraph::E(graph1 %s% graph2))
-  un <- length(igraph::E(graph1 %u% graph2))
+  inter <- length(igraph::E(igraph::graph.intersection(graph1,graph2)))
+  un <- length(igraph::E(igraph::graph.union(graph1,graph2)))
 
   if (un == 0) {
     0

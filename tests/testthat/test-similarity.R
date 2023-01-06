@@ -4,6 +4,12 @@ test_that("similarities are computed in square matrix for all users with diagona
   expect_true(all(diag(gower_sim_mat) == 1))
 })
 
+test_that("similarities are computed in square matrix for all users with diagonal of 1s* for jaccard", {
+  jaccard_sim_mat <- get_model_sims(example_models, method = "jaccard")
+  expect_true(all(dim(jaccard_sim_mat) == nrow(example_models$user_data)))
+  expect_true(all(diag(jaccard_sim_mat) == 1))
+})
+
 test_that("tibble of similarities is returned and is of length n users squared minus n users", {
   gower_sim_df <- get_model_sims(example_models, output = "tibble")
   n_users <- nrow(example_models$user_data)
